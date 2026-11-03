@@ -259,28 +259,51 @@
       </button>`;
   }
 
+  const ROLE_DESC = {
+    GK: 'Ultimo baluardo: riflessi, uscite e guida della difesa.',
+    DIF: 'Chiusure, copertura e impostazione dal basso.',
+    CEN: 'Motore della squadra: recupero, geometrie e inserimenti.',
+    ATT: 'Finalizzazione, movimenti in profondità e pressione alta.'
+  };
+  const confettiHTML = () => Array.from({ length: 46 }, (_, i) => {
+    const c = ['#f7e7a1', '#d4af37', '#ffffff', '#8b9096'][i % 4];
+    return `<i style="left:${(Math.random() * 100).toFixed(1)}%;background:${c};animation-delay:${(Math.random() * 0.6).toFixed(2)}s"></i>`;
+  }).join('');
+
   function openPack() {
     if (packBusy) return;
     packBusy = true;
+    document.querySelectorAll('.confetti').forEach((n) => n.remove());
     renderClosedPack();
     const packBtn = $('#packSlot .pack');
     const dots = $$('#packPitch i');
     const lightDelay = reduceMotion ? 0 : LIGHT_STEP_MS;
-    const shakeMs = reduceMotion ? 0 : 1000;
+    const spinMs = reduceMotion ? 0 : 1800;
     const winner = D.players[Math.floor(Math.random() * D.players.length)];
 
-    packBtn.classList.add('shake');
+    packBtn.classList.add(reduceMotion ? 'glow' : 'spin');
     dots.forEach((d, i) => setTimeout(() => d.classList.add('on'), i * lightDelay));
 
     setTimeout(() => {
+      packBtn.classList.add('glow');
       $('#packSlot').innerHTML = `
-        <div class="mcard pack-reveal">
-          ${photoHTML(winner)}
-          <div class="mmeta"><span class="mname">${esc(winner.name)}</span><span class="mrole">${esc(winner.label || ROLE[winner.role])}</span></div>
+        <div class="fifa-card">
+          <div class="fc-body">
+            <div class="photo fc-photo">
+              <span class="num">${esc(winner.number)}</span>
+              <img src="${esc(winner.photo)}" alt="${esc(winner.name)}" onerror="this.remove()">
+            </div>
+            <div class="fc-info">
+              <span class="fc-role">${esc(winner.label || ROLE[winner.role])}</span>
+              <h4 class="fc-name">${esc(winner.name)}</h4>
+              <p class="fc-desc">${esc(ROLE_DESC[winner.role])}</p>
+            </div>
+          </div>
         </div>`;
+      $('.pack-stage').insertAdjacentHTML('beforeend', `<div class="confetti">${confettiHTML()}</div>`);
       packBusy = false;
       setTimeout(() => dots.forEach((d) => d.classList.remove('on')), 2500);
-    }, shakeMs);
+    }, spinMs + 300);
   }
 
   $('#packSlot').addEventListener('click', (e) => {
