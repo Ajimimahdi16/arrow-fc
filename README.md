@@ -4,7 +4,7 @@ Il sito ufficiale di **Arrow F.C.**, squadra di Serie A LegaCalcio a 8 del Piemo
 
 ![Anteprima del sito](docs/anteprima-sito.png)
 
-**Vai al sito:** https://ajimimahdi16.github.io/arrow-fc/
+**Vai al sito:** https://arrowfc.it/
 
 ## Cosa contiene
 
