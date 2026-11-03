@@ -1,4 +1,4 @@
-(() => {
+window.ARROW_READY.then(() => {
   'use strict';
 
   const D = window.ARROW_DATA;
@@ -537,6 +537,7 @@
           <button class="btn" type="button" data-admin="photos">Foto</button>
           <button class="btn" type="button" data-admin="stats">Statistiche</button>
           <button class="btn" type="button" data-admin="sponsor">Sponsor</button>
+          <button class="btn" type="button" data-admin="import">Importa dati</button>
         </div>
         <div class="admin-foot"><span></span><button class="btn" type="button" data-admin-logout>Esci</button></div>`),
     matches: () => matchList(),
@@ -570,6 +571,14 @@
           <p class="admin-full admin-error" data-login-error hidden></p>
           <button class="btn btn-solid admin-full" type="submit">Accedi</button>
         </form>`),
+    import: () => adminBody(`
+        <div class="admin-top"><button class="btn" type="button" data-admin="hub">Indietro</button></div>
+        <h3>Importa i dati attuali</h3>
+        <p class="admin-note">Copia nel database rosa, partite, galleria, sponsor e collezione, e carica le foto. Le tabelle già piene vengono saltate.</p>
+        <div class="admin-foot">
+          <p class="admin-note" data-import-log></p>
+          <button class="btn btn-solid" type="button" data-admin-import>Avvia importazione</button>
+        </div>`),
     stats: () => adminBody(`
         <div class="admin-top"><button class="btn" type="button" data-admin="hub">Indietro</button></div>
         <h3>Statistiche giocatori</h3>
@@ -633,6 +642,19 @@
     if (open) showAdmin(open.dataset.openAdmin);
   });
   adminDialog.addEventListener('click', async (e) => {
+    if (e.target.closest('[data-admin-import]')) {
+      const note = adminDialog.querySelector('[data-import-log]');
+      const btn = e.target.closest('[data-admin-import]');
+      btn.disabled = true;
+      try {
+        const result = await window.importArrowData((t) => { note.textContent = t; });
+        note.textContent = 'Importazione completata: ' + result + '. Ricarica il sito per vedere i dati.';
+      } catch (err) {
+        note.textContent = 'Errore: ' + (err.message || err);
+      }
+      btn.disabled = false;
+      return;
+    }
     if (e.target.closest('[data-admin-logout]')) {
       if (sb) await sb.auth.signOut();
       return showAdmin('login');
@@ -676,4 +698,4 @@
     setInterval(() => { if (!paused) rotateSpot(); }, ROTATE_MS);
     setInterval(() => { if (!paused) swapSquad(); }, SWAP_MS);
   }
-})();
+});
