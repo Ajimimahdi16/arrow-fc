@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arrow F.C. · Serie A LegaCalcio a 8</title>
+  <meta name="description" content="Sito ufficiale di Arrow F.C.: palmarès, rosa, formazione, calendario, galleria e social.">
+  <link rel="icon" href="assets/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header" id="header">
+    <a class="brand" href="#top"><img src="assets/logo.jpg" alt=""><span>ARROW F.C.</span></a>
+    <button class="admin-only btn admin-entry" id="adminEntry" type="button">Admin</button>
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri il menu" aria-expanded="false" aria-controls="nav">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav" id="nav">
+      <a href="#palmares">Palmarès</a>
+      <a href="#rosa">Rosa</a>
+      <a href="#formazione">Formazione</a>
+      <a href="#pacchetto">Pacchetto</a>
+      <a href="#partite">Calendario</a>
+      <a href="#galleria">Galleria</a>
+      <a href="#sponsor">Sponsor</a>
+      <a href="#social">Social</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-inner">
+        <img class="hero-logo" src="assets/logo.jpg" alt="Stemma Arrow F.C.">
+        <p class="eyebrow">Serie A LegaCalcio a 8 · Piemonte</p>
+        <h1>ARROW F.C.</h1>
+        <p class="lead">Una squadra che vince, cresce e lascia il segno.</p>
+        <div class="countdown" id="countdown" aria-live="polite"></div>
+        <div class="hero-actions">
+          <a class="btn btn-solid" href="#formazione">Formazione</a>
+          <a class="btn" href="#partite">Calendario</a>
+        </div>
+      </div>
+      <a class="scroll-cue" href="#palmares" aria-label="Scorri in basso">↓</a>
+    </section>
+
+    <section id="palmares" class="section">
+      <h2 class="section-title">Palmarès</h2>
+      <p class="section-sub">Dai trofei ai piazzamenti: il percorso di Arrow F.C.</p>
+      <div class="trophy-grid" id="trophies"></div>
+    </section>
+
+    <section id="rosa" class="section alt">
+      <h2 class="section-title">La rosa</h2>
+      <p class="section-sub">Tocca un giocatore per la scheda completa.</p>
+      <div class="admin-only admin-actions"><button class="btn" type="button" data-open-admin="player">+ Aggiungi giocatore</button></div>
+      <div class="filters" id="rosterFilters"></div>
+      <div class="roster-grid" id="roster"></div>
+    </section>
+
+    <section id="formazione" class="section">
+      <h2 class="section-title">Formazione</h2>
+      <p class="section-sub">Modulo 3-3-1 più portiere. Titolari e panchina si alternano da soli.</p>
+      <div class="lineup-wrap">
+        <div class="pitch" id="pitch">
+          <div class="pitch-center"></div>
+          <div class="slots" id="slots"></div>
+        </div>
+        <aside class="spotlight" id="spotlight" aria-live="polite"></aside>
+      </div>
+      <div class="lineup-controls">
+        <span class="squad-label" id="squadLabel">Titolari</span>
+        <button class="btn" id="pauseBtn" type="button">Pausa</button>
+        <button class="btn" id="swapBtn" type="button">Cambia ora</button>
+      </div>
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track" id="marquee"></div>
+      </div>
+    </section>
+
+    <section id="pacchetto" class="section alt">
+      <h2 class="section-title">Apri il pacchetto</h2>
+      <p class="section-sub">Ogni pacchetto porta un giocatore nella tua collezione.</p>
+      <div class="pack-stage">
+        <div class="pack-pitch" id="packPitch"></div>
+        <div class="pack-card-slot" id="packSlot"></div>
+      </div>
+      <div class="pack-actions">
+        <button class="btn btn-solid" id="openPackBtn" type="button">Apri pacchetto</button>
+      </div>
+      <h3 class="sub-title">La tua collezione <span id="collectedCount">0/16</span></h3>
+      <div class="collection" id="collection"></div>
+    </section>
+
+    <section id="partite" class="section">
+      <h2 class="section-title">Calendario</h2>
+      <p class="section-sub">Date e orari della stagione 2026/27.</p>
+      <div class="admin-only admin-actions"><button class="btn" type="button" data-open-admin="match-new">+ Aggiungi partita</button></div>
+      <ol class="matches" id="matches"></ol>
+    </section>
+
+    <section id="galleria" class="section alt">
+      <h2 class="section-title">Galleria</h2>
+      <p class="section-sub">Foto e video di partite, allenamenti e giocatori.</p>
+      <div class="admin-only admin-actions"><button class="btn" type="button" data-open-admin="photos">+ Carica foto</button></div>
+      <div class="filters" id="galleryFilters"></div>
+      <div class="gallery-grid" id="gallery"></div>
+    </section>
+
+    <section id="sponsor" class="section">
+      <h2 class="section-title">Sponsor 2026/27</h2>
+      <p class="section-sub">Grazie a chi sostiene Arrow F.C. in questa stagione.</p>
+      <div class="admin-only admin-actions"><button class="btn" type="button" data-open-admin="sponsor">+ Aggiungi sponsor</button></div>
+      <div class="sponsor-grid" id="sponsorGrid"></div>
+    </section>
+
+    <section id="social" class="section">
+      <h2 class="section-title">Seguici</h2>
+      <p class="section-sub">Aggiornamenti, highlights e dietro le quinte.</p>
+      <div class="social-grid" id="socialCards"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">© Arrow F.C. · Piemonte · Bozza del sito</footer>
+
+  <dialog id="modal" class="modal"></dialog>
+  <dialog id="adminDialog" class="modal admin-dialog"></dialog>
+
+  <dialog id="lightbox" class="lightbox">
+    <button class="lb-btn lb-close" type="button" aria-label="Chiudi">×</button>
+    <button class="lb-btn lb-prev" type="button" aria-label="Foto precedente">‹</button>
+    <img id="lbImg" alt="">
+    <button class="lb-btn lb-next" type="button" aria-label="Foto successiva">›</button>
+    <p id="lbCap"></p>
+  </dialog>
+
+  <script src="js/data.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
+</body>
+</html>
