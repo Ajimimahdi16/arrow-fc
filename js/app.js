@@ -528,7 +528,7 @@
   }
 
   const ADMIN_VIEWS = {
-    hub: adminBody(`
+    hub: () => adminBody(`
         <h3>Pannello admin</h3>
         <p class="admin-note">${ADMIN_NOTE}</p>
         <div class="admin-choices">
@@ -537,7 +537,8 @@
           <button class="btn" type="button" data-admin="photos">Foto</button>
           <button class="btn" type="button" data-admin="stats">Statistiche</button>
           <button class="btn" type="button" data-admin="sponsor">Sponsor</button>
-        </div>`),
+        </div>
+        <div class="admin-foot"><span></span><button class="btn" type="button" data-admin-logout>Esci</button></div>`),
     matches: () => matchList(),
     'match-new': () => matchEditor(-1),
     player: adminForm('Nuovo giocatore', `
@@ -552,6 +553,15 @@
             <select><option>Partita del 15 nov</option><option>Allenamento</option><option>Giocatori</option></select>
           </label>
           <div class="admin-drop admin-full">Trascina qui le foto, oppure scegli i file<input type="file" accept="image/*" multiple></div>`),
+    login: () => adminBody(`
+        <h3>Accesso admin</h3>
+        <p class="admin-note">Accedi con l'email e la password ricevute dall'invito.</p>
+        <form class="admin-form" data-login-form>
+          <label class="admin-full">Email<input type="email" name="email" autocomplete="username" required></label>
+          <label class="admin-full">Password<input type="password" name="password" autocomplete="current-password" required></label>
+          <p class="admin-full admin-error" data-login-error hidden></p>
+          <button class="btn btn-solid admin-full" type="submit">Accedi</button>
+        </form>`),
     stats: () => adminBody(`
         <div class="admin-top"><button class="btn" type="button" data-admin="hub">Indietro</button></div>
         <h3>Statistiche giocatori</h3>
@@ -573,17 +583,43 @@
           <label class="admin-full">Nome<input type="text" placeholder="Nome dell'attività"></label>
           <label class="admin-full">Logo<input type="file" accept="image/*"></label>`)
   };
-  function showAdmin(view) {
-    const v = ADMIN_VIEWS[view];
+  const sb = window.supabase && window.ARROW_CONFIG
+    ? window.supabase.createClient(ARROW_CONFIG.supabaseUrl, ARROW_CONFIG.supabaseKey)
+    : null;
+  async function isLoggedIn() {
+    if (!sb) return false;
+    const { data } = await sb.auth.getSession();
+    return Boolean(data.session);
+  }
+  async function showAdmin(view) {
+    // Tutte le sezioni admin richiedono l'accesso
+    const allowed = await isLoggedIn();
+    const key = allowed ? view : 'login';
+    const v = ADMIN_VIEWS[key];
     adminDialog.innerHTML = typeof v === 'function' ? v() : v;
     if (!adminDialog.open) adminDialog.showModal();
   }
+  adminDialog.addEventListener('submit', async (e) => {
+    if (!e.target.matches('[data-login-form]')) return;
+    e.preventDefault();
+    const err = e.target.querySelector('[data-login-error]');
+    const email = e.target.email.value.trim();
+    const password = e.target.password.value;
+    if (!sb) { err.textContent = 'Accesso non disponibile in questo momento.'; err.hidden = false; return; }
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) { err.textContent = 'Email o password non corrette.'; err.hidden = false; return; }
+    showAdmin('hub');
+  });
   $('#adminEntry').addEventListener('click', () => showAdmin('hub'));
   document.addEventListener('click', (e) => {
     const open = e.target.closest('[data-open-admin]');
     if (open) showAdmin(open.dataset.openAdmin);
   });
-  adminDialog.addEventListener('click', (e) => {
+  adminDialog.addEventListener('click', async (e) => {
+    if (e.target.closest('[data-admin-logout]')) {
+      if (sb) await sb.auth.signOut();
+      return showAdmin('login');
+    }
     const edit = e.target.closest('[data-admin-edit]');
     if (edit) { adminDialog.innerHTML = matchEditor(Number(edit.dataset.adminEdit)); return; }
     const view = e.target.closest('[data-admin]');

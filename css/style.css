@@ -669,3 +669,5 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.85); }
 .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .confetti i { position: absolute; top: -14px; width: 8px; height: 14px; border-radius: 2px; animation: confettiFall 2.4s ease-in forwards; }
 @keyframes confettiFall { to { transform: translateY(460px) rotate(720deg); opacity: 0; } }
+
+.admin-error { margin: 0; font-size: 13px; color: #f2a7a7; }
