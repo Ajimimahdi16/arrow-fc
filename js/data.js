@@ -64,6 +64,25 @@
       { date: '2026-12-14T22:00:00', crest: 'assets/teams/2026-12-14.jpg', opponent: 'AC Bra', competition: 'Serie A LegaCalcio a 8', score: null }
     ],
 
+    // Foto della collezione (scelte da voi)
+    collection: [
+      'assets/collezione/collezione-53.jpg',
+      'assets/collezione/collezione-54.jpg',
+      'assets/collezione/collezione-55.jpg',
+      'assets/collezione/collezione-56.jpg',
+      'assets/collezione/collezione-57.jpg',
+      'assets/collezione/collezione-58.jpg',
+      'assets/collezione/collezione-59.jpg',
+      'assets/collezione/collezione-60.jpg',
+      'assets/collezione/collezione-61.jpg',
+      'assets/collezione/collezione-62.jpg',
+      'assets/collezione/collezione-63.jpg',
+      'assets/collezione/collezione-64.jpg',
+      'assets/collezione/collezione-65.jpg',
+      'assets/collezione/collezione-66.jpg',
+      'assets/collezione/collezione-67.jpg'
+    ],
+
     galleryCategories: ['partite', 'giocatori', 'allenamenti'],
 
     // Categorie provvisorie: tutte le foto sono in "partite". Sposta le foto

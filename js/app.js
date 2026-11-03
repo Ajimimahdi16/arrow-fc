@@ -13,7 +13,6 @@
   const SWAP_MS = 6000;      // ogni quanto titolari e panchina si alternano
   const ROTATE_MS = 1500;    // ogni quanto cambia la scheda in evidenza
   const LIGHT_STEP_MS = 8;   // velocità di accensione dei puntini del pacchetto
-  const COLLECTION_KEY = 'arrowfc-collezione';
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ---------- Markup riutilizzabile ----------
@@ -245,26 +244,8 @@
       .map((p) => `<div class="mq">${miniCardHTML(p)}</div>`).join('');
   }
 
-  // ---------- Apri pacchetto ----------
-  const COLL_PLAYERS = D.players.length;
-  const collection = new Set(loadCollection());
+  // ---------- Apri pacchetto: animazione e giocatore, senza salvarlo in collezione ----------
   let packBusy = false;
-
-  function loadCollection() {
-    try {
-      return JSON.parse(localStorage.getItem(COLLECTION_KEY)) || [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveCollection() {
-    try {
-      localStorage.setItem(COLLECTION_KEY, JSON.stringify([...collection]));
-    } catch {
-      // storage non disponibile: la collezione resta valida per questa visita
-    }
-  }
 
   function buildPackPitch() {
     $('#packPitch').innerHTML = Array.from({ length: 96 }, () => '<i></i>').join('');
@@ -278,25 +259,6 @@
       </button>`;
   }
 
-  function pickPlayer() {
-    const missing = D.players.filter((p) => !collection.has(p.id));
-    const pool = missing.length ? missing : D.players;
-    return pool[Math.floor(Math.random() * pool.length)];
-  }
-
-  function revealCard(p) {
-    const isNew = !collection.has(p.id);
-    collection.add(p.id);
-    saveCollection();
-    $('#packSlot').innerHTML = `
-      <div class="mcard pack-reveal">
-        ${isNew ? '<span class="new">NUOVO</span>' : ''}
-        ${photoHTML(p)}
-        <div class="mmeta"><span class="mname">${esc(p.name)}</span><span class="mrole">${(p.label || ROLE[p.role])}</span></div>
-      </div>`;
-    renderCollection();
-  }
-
   function openPack() {
     if (packBusy) return;
     packBusy = true;
@@ -305,13 +267,17 @@
     const dots = $$('#packPitch i');
     const lightDelay = reduceMotion ? 0 : LIGHT_STEP_MS;
     const shakeMs = reduceMotion ? 0 : 1000;
-    const winner = pickPlayer();
+    const winner = D.players[Math.floor(Math.random() * D.players.length)];
 
     packBtn.classList.add('shake');
     dots.forEach((d, i) => setTimeout(() => d.classList.add('on'), i * lightDelay));
 
     setTimeout(() => {
-      revealCard(winner);
+      $('#packSlot').innerHTML = `
+        <div class="mcard pack-reveal">
+          ${photoHTML(winner)}
+          <div class="mmeta"><span class="mname">${esc(winner.name)}</span><span class="mrole">${esc(winner.label || ROLE[winner.role])}</span></div>
+        </div>`;
       packBusy = false;
       setTimeout(() => dots.forEach((d) => d.classList.remove('on')), 2500);
     }, shakeMs);
@@ -322,12 +288,12 @@
   });
   $('#openPackBtn').addEventListener('click', openPack);
 
+  // La collezione mostra le foto scelte, non i giocatori aperti nei pacchetti
   function renderCollection() {
-    $('#collectedCount').textContent = `${collection.size}/${COLL_PLAYERS}`;
-    $('#collection').innerHTML = D.players.map((p) => collection.has(p.id)
-      ? `<div class="coll ok">${miniCardHTML(p)}</div>`
-      : `<div class="coll locked" aria-label="Carta da sbloccare">?</div>`
-    ).join('');
+    $('#collection').innerHTML = D.collection.map((src, i) => `
+      <figure class="coll-photo">
+        <img src="${esc(src)}" alt="Foto della collezione ${i + 1}" loading="lazy" onerror="this.closest('.coll-photo').remove()">
+      </figure>`).join('');
   }
 
   // ---------- Calendario ----------
