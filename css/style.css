@@ -657,7 +657,7 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.85); }
 .pack.spin { animation: packSpin 1.8s cubic-bezier(0.3, 0.6, 0.3, 1) both; }
 .pack.glow { box-shadow: 0 0 60px 18px rgba(247, 231, 161, 0.55); }
 @keyframes packSpin { from { transform: rotateY(0) scale(1); } to { transform: rotateY(1440deg) scale(1.05); } }
-.fifa-card { width: 240px; padding: 4px; border-radius: 18px; background: linear-gradient(135deg, #f7e7a1 0%, #d4af37 45%, #9a7418 100%); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7); animation: cardIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.fifa-card { width: 240px; padding: 4px; border-radius: 18px; background: linear-gradient(135deg, #f7e7a1 0%, #d4af37 45%, #9a7418 100%); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7); animation: fifaIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 .fc-body { background: #111214; border-radius: 14px; overflow: hidden; }
 .fc-photo { aspect-ratio: 4 / 4.2; }
 .fc-photo .num { color: rgba(247, 231, 161, 0.5); }
@@ -665,7 +665,7 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.85); }
 .fc-role { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #d4af37; }
 .fc-name { margin: 6px 0 4px; font-family: var(--font-title); font-size: 22px; color: var(--white); }
 .fc-desc { margin: 6px 0 0; font-size: 13px; color: var(--grey-2); }
-@keyframes cardIn { from { opacity: 0; transform: scale(0.4) rotateY(180deg); } to { opacity: 1; transform: none; } }
+@keyframes fifaIn { from { opacity: 0; transform: scale(0.4) rotateY(180deg); } to { opacity: 1; transform: none; } }
 .confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .confetti i { position: absolute; top: -14px; width: 8px; height: 14px; border-radius: 2px; animation: confettiFall 2.4s ease-in forwards; }
 @keyframes confettiFall { to { transform: translateY(460px) rotate(720deg); opacity: 0; } }
