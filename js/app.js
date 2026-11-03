@@ -553,6 +553,14 @@
             <select><option>Partita del 15 nov</option><option>Allenamento</option><option>Giocatori</option></select>
           </label>
           <div class="admin-drop admin-full">Trascina qui le foto, oppure scegli i file<input type="file" accept="image/*" multiple></div>`),
+    password: () => adminBody(`
+        <h3>Imposta la password</h3>
+        <p class="admin-note">Scegli una password per accedere al pannello admin (almeno 8 caratteri).</p>
+        <form class="admin-form" data-password-form>
+          <label class="admin-full">Nuova password<input type="password" name="password" minlength="8" autocomplete="new-password" required></label>
+          <p class="admin-full admin-error" data-login-error hidden></p>
+          <button class="btn btn-solid admin-full" type="submit">Salva password</button>
+        </form>`),
     login: () => adminBody(`
         <h3>Accesso admin</h3>
         <p class="admin-note">Accedi con l'email e la password ricevute dall'invito.</p>
@@ -600,6 +608,15 @@
     if (!adminDialog.open) adminDialog.showModal();
   }
   adminDialog.addEventListener('submit', async (e) => {
+    if (e.target.matches('[data-password-form]')) {
+      e.preventDefault();
+      const err = e.target.querySelector('[data-login-error]');
+      const { error } = await sb.auth.updateUser({ password: e.target.password.value });
+      if (error) { err.textContent = 'Password non salvata: ' + error.message; err.hidden = false; return; }
+      history.replaceState(null, '', location.pathname + location.search);
+      showAdmin('hub');
+      return;
+    }
     if (!e.target.matches('[data-login-form]')) return;
     e.preventDefault();
     const err = e.target.querySelector('[data-login-error]');
@@ -631,6 +648,11 @@
     if (e.target === adminDialog || e.target.closest('.modal-close')) adminDialog.close();
   });
   if (new URLSearchParams(location.search).has('admin')) document.body.classList.add('admin-preview');
+  // Arrivo da un invito o da un reset password: l'amministratore sceglie la password
+  if (sb && /type=(invite|recovery)/.test(location.hash)) {
+    document.body.classList.add('admin-preview');
+    sb.auth.getSession().then(() => showAdmin('password'));
+  }
 
   // ---------- Avvio ----------
   renderTrophies();
