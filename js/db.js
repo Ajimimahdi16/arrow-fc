@@ -25,6 +25,7 @@
     if (res.error) throw res.error;
     return res.data;
   };
+  const ok = check;
 
   async function loadFromDb() {
     if (!sb) return;
@@ -76,6 +77,22 @@
     }
     if (collection.data.length) {
       D.collection = collection.data.map((r) => r.src);
+    }
+    // Dirigenza e allenatori: se la tabella non c'è ancora, restano i segnaposto di data.js
+    try {
+      const staff = ok(await sb.from('staff').select('*').eq('active', true).order('sort'));
+      if (staff.length) {
+        D.staff = staff.map((r) => ({
+          id: r.id,
+          name: r.name,
+          role: r.role,
+          initials: r.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase(),
+          photo: r.photo_url || '',
+          desc: r.description || ''
+        }));
+      }
+    } catch (err) {
+      console.warn('Dirigenza non letta dal database:', err.message || err);
     }
   }
 

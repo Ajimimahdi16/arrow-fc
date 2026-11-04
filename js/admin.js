@@ -46,6 +46,7 @@
           <button class="btn" type="button" data-admin="matches">Partite</button>
           <button class="btn" type="button" data-admin="players">Giocatori</button>
           <button class="btn" type="button" data-admin="gallery">Galleria</button>
+          <button class="btn" type="button" data-admin="staff">Dirigenza</button>
           <button class="btn" type="button" data-admin="sponsors">Sponsor</button>
           <button class="btn" type="button" data-admin="stats">Statistiche</button>
           <button class="btn" type="button" data-admin="import">Importa dati</button>
@@ -143,6 +144,23 @@
         ${foot()}`);
     },
 
+    // ---------- Dirigenza e allenatori ----------
+    staff: async () => {
+      const rows = ok(await db().from('staff').select('*').order('sort'));
+      const list = rows.map((s) => `<button class="admin-match-row" type="button" data-edit-staff="${s.id}">
+          <span class="admin-match-date">${esc(s.role)}</span>
+          <span class="admin-match-opp">${esc(s.name)}</span>
+          <span class="outcome">${s.active ? 'Visibile' : 'Nascosto'}</span>
+        </button>`).join('');
+      return body(`${back}<h3>Dirigenza e allenatori</h3>
+        <p class="admin-note">Le schede cambiano da sole nella pagina della formazione.</p>
+        <div class="admin-match-list">${list || '<p class="admin-note">Nessuna persona inserita.</p>'}</div>
+        <div class="admin-foot"><span></span><button class="btn btn-solid" type="button" data-admin="staff-new">+ Nuova persona</button></div>`);
+    },
+
+    'staff-new': async () => staffForm(null),
+    'staff-edit': async (id) => staffForm(id),
+
     // ---------- Statistiche (calcolate dal database) ----------
     stats: async () => {
       const [players, events, presences] = await Promise.all([
@@ -223,6 +241,22 @@
         </label>
         <label>Come lo chiamiamo<input type="text" name="label" value="${esc(p?.label || '')}" placeholder="Es. Terzino, Esterno"></label>
         <label class="admin-full">Foto<input type="file" name="photo" accept="image/*"></label>
+      </form>
+      ${foot()}`);
+  }
+
+  async function staffForm(id) {
+    const s = id ? ok(await db().from('staff').select('*').eq('id', id).single()) : null;
+    return body(`${back}<h3>${s ? esc(s.name) : 'Nuova persona'}</h3>
+      <form class="admin-form" data-form="staff" data-id="${id || ''}">
+        <label class="admin-full">Nome e cognome<input type="text" name="name" value="${esc(s?.name || '')}" required></label>
+        <label>Ruolo<input type="text" name="role" value="${esc(s?.role || '')}" placeholder="Es. Allenatore, Dirigente" required></label>
+        <label>Ordine nella scheda<input type="number" name="sort" value="${s?.sort ?? 0}" min="0"></label>
+        <label class="admin-full">Presentazione<input type="text" name="description" value="${esc(s?.description || '')}" placeholder="Una frase su di lui"></label>
+        <label class="admin-full">Foto<input type="file" name="photo" accept="image/*"></label>
+        <label class="admin-full">Visibile sul sito
+          <select name="active"><option value="true" ${s?.active !== false ? 'selected' : ''}>Sì</option><option value="false" ${s?.active === false ? 'selected' : ''}>No</option></select>
+        </label>
       </form>
       ${foot()}`);
   }
@@ -328,6 +362,27 @@
     }));
   }
 
+  async function saveStaff(form, id) {
+    const f = new FormData(form);
+    const name = (f.get('name') || '').trim();
+    const role = (f.get('role') || '').trim();
+    if (!name || !role) throw new Error('Inserisci nome e ruolo');
+    const row = {
+      name,
+      role,
+      description: (f.get('description') || '').trim() || null,
+      sort: Number(f.get('sort')) || 0,
+      active: f.get('active') !== 'false'
+    };
+    const photo = f.get('photo');
+    if (photo && photo.size) row.photo_url = await uploadFile(photo, `staff/${Date.now()}-${safeName(photo.name)}`);
+    if (id) {
+      ok(await db().from('staff').update(row).eq('id', Number(id)));
+    } else {
+      ok(await db().from('staff').insert(row));
+    }
+  }
+
   async function runSave(form) {
     const kind = form.dataset.form;
     const id = form.dataset.id;
@@ -335,6 +390,7 @@
     if (kind === 'player') return savePlayer(form, id);
     if (kind === 'gallery') return saveGallery(form);
     if (kind === 'sponsor') return saveSponsor(form);
+    if (kind === 'staff') return saveStaff(form, id);
     throw new Error('Modulo non riconosciuto');
   }
 
@@ -361,6 +417,8 @@
 
     const edit = e.target.closest('[data-edit-match]');
     if (edit) return showAdmin('match-edit', edit.dataset.editMatch);
+    const editStaff = e.target.closest('[data-edit-staff]');
+    if (editStaff) return showAdmin('staff-edit', editStaff.dataset.editStaff);
     const editPlayer = e.target.closest('[data-edit-player]');
     if (editPlayer) return showAdmin('player-edit', editPlayer.dataset.editPlayer);
 
