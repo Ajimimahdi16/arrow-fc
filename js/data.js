@@ -99,8 +99,10 @@
 
     // Dirigenza e allenatore: la scheda cambia da sola. Per aggiungere una persona, copia una voce.
     staff: [
-      { name: 'Allenatore', role: 'Allenatore', initials: 'AL', photo: '', desc: 'Foto e presentazione in arrivo.' },
-      { name: 'Dirigenza', role: 'Dirigente', initials: 'DI', photo: '', desc: 'Foto e presentazione in arrivo.' }
+      { name: 'Giuseppe Porpiglia', role: 'Mister', initials: 'GP', photo: 'assets/staff/foto-92.jpg', desc: '' },
+      { name: 'Alberico Scirocco', role: 'Mister / Preparatore atletico', initials: 'AS', photo: 'assets/staff/foto-93.jpg', desc: '' },
+      { name: 'Gabriele Chinè', role: 'Direttore sportivo', initials: 'GC', photo: 'assets/staff/foto-94.jpg', desc: '' },
+      { name: 'Jacopo Manuguerra', role: 'Team manager / Direttore area sportiva', initials: 'JM', photo: 'assets/staff/foto-95.jpg', desc: '' }
     ],
 
     // Sponsor 2026/27 dal PDF "loghi". Per aggiungerne uno: nome e percorso del logo.
