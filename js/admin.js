@@ -133,16 +133,17 @@
     // ---------- Sponsor ----------
     sponsors: async () => {
       const list = ok(await db().from('sponsors').select('*').order('sort'));
-      const rows = list.map((s) => `<div class="admin-stats-row"><span>${esc(s.name)}</span></div>`).join('');
+      const rows = list.map((s) => `<button class="admin-match-row" type="button" data-edit-sponsor="${s.id}">
+          <span class="admin-match-date">${s.tone === 'light' ? 'Sfondo chiaro' : 'Sfondo scuro'}</span>
+          <span class="admin-match-opp">${esc(s.name)}</span>
+        </button>`).join('');
       return body(`${back}<h3>Sponsor</h3>
-        <div class="admin-stats">${rows}</div>
-        <form class="admin-form" data-form="sponsor">
-          <label class="admin-full">Nome<input type="text" name="name" required></label>
-          <label>Sfondo<select name="tone"><option value="dark">Scuro</option><option value="light">Chiaro</option></select></label>
-          <label class="admin-full">Logo<input type="file" name="logo" accept="image/*" required></label>
-        </form>
-        ${foot()}`);
+        <div class="admin-match-list">${rows || '<p class="admin-note">Nessuno sponsor inserito.</p>'}</div>
+        <div class="admin-foot"><span></span><button class="btn btn-solid" type="button" data-admin="sponsor-new">+ Nuovo sponsor</button></div>`);
     },
+
+    'sponsor-new': async () => sponsorForm(null),
+    'sponsor-edit': async (id) => sponsorForm(id),
 
     // ---------- Dirigenza e allenatori ----------
     staff: async () => {
@@ -351,17 +352,32 @@
     }
   }
 
-  async function saveSponsor(form) {
+  async function sponsorForm(id) {
+    const s = id ? ok(await db().from('sponsors').select('*').eq('id', id).single()) : null;
+    return body(`${back}<h3>${s ? esc(s.name) : 'Nuovo sponsor'}</h3>
+      <form class="admin-form" data-form="sponsor" data-id="${id || ''}">
+        <label class="admin-full">Nome<input type="text" name="name" value="${esc(s?.name || '')}" required></label>
+        <label>Sfondo<select name="tone"><option value="dark" ${s?.tone !== 'light' ? 'selected' : ''}>Scuro</option><option value="light" ${s?.tone === 'light' ? 'selected' : ''}>Chiaro</option></select></label>
+        <label>Ordine nella pagina<input type="number" name="sort" value="${s?.sort ?? 100}" min="0"></label>
+        <label class="admin-full">Logo${s ? ' (lascia vuoto per tenere quello attuale)' : ''}<input type="file" name="logo" accept="image/*"></label>
+      </form>
+      ${foot()}
+      ${s ? `<div class="admin-foot"><span></span><button class="btn" type="button" data-admin-delete="${s.id}">Elimina sponsor</button></div>` : ''}`);
+  }
+
+  async function saveSponsor(form, id) {
     const f = new FormData(form);
+    const name = (f.get('name') || '').trim();
+    if (!name) throw new Error('Inserisci il nome');
+    const row = { name, tone: f.get('tone') || 'dark', sort: Number(f.get('sort')) || 0 };
     const logo = f.get('logo');
-    if (!logo || !logo.size) throw new Error('Scegli il logo');
-    const url = await uploadFile(logo, `sponsors/${Date.now()}-${safeName(logo.name)}`);
-    ok(await db().from('sponsors').insert({
-      name: (f.get('name') || '').trim(),
-      tone: f.get('tone') || 'dark',
-      logo_url: url,
-      sort: Date.now() % 100000
-    }));
+    if (logo && logo.size) row.logo_url = await uploadFile(logo, `sponsors/${Date.now()}-${safeName(logo.name)}`);
+    if (id) {
+      ok(await db().from('sponsors').update(row).eq('id', Number(id)));
+    } else {
+      if (!row.logo_url) throw new Error('Scegli il logo');
+      ok(await db().from('sponsors').insert(row));
+    }
   }
 
   async function saveStaff(form, id) {
@@ -391,7 +407,7 @@
     if (kind === 'match') return saveMatch(form, id);
     if (kind === 'player') return savePlayer(form, id);
     if (kind === 'gallery') return saveGallery(form);
-    if (kind === 'sponsor') return saveSponsor(form);
+    if (kind === 'sponsor') return saveSponsor(form, id);
     if (kind === 'staff') return saveStaff(form, id);
     throw new Error('Modulo non riconosciuto');
   }
@@ -423,6 +439,20 @@
     if (editStaff) return showAdmin('staff-edit', editStaff.dataset.editStaff);
     const editPlayer = e.target.closest('[data-edit-player]');
     if (editPlayer) return showAdmin('player-edit', editPlayer.dataset.editPlayer);
+    const editSponsor = e.target.closest('[data-edit-sponsor]');
+    if (editSponsor) return showAdmin('sponsor-edit', editSponsor.dataset.editSponsor);
+
+    const delSponsor = e.target.closest('[data-admin-delete]');
+    if (delSponsor) {
+      if (!confirm('Eliminare questo sponsor? Non si può annullare.')) return;
+      try {
+        ok(await db().from('sponsors').delete().eq('id', Number(delSponsor.dataset.adminDelete)));
+        return showAdmin('sponsors');
+      } catch (err) {
+        alert('Errore: ' + (err.message || err));
+        return;
+      }
+    }
 
     const view = e.target.closest('[data-admin]');
     if (view) return showAdmin(view.dataset.admin);
