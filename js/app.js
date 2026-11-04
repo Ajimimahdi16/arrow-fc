@@ -461,8 +461,36 @@ window.ARROW_READY.then(() => {
   renderSocial();
   startCountdown();
 
+  // ---------- Dirigenza e allenatore (scheda che cambia) ----------
+  const STAFF = D.staff || [];
+  const STAFF_MS = 4000;
+  let staffIdx = 0;
+  function showStaff(animate) {
+    const box = $('#staffCard');
+    if (!box || !STAFF.length) return;
+    const s = STAFF[staffIdx];
+    const photo = s.photo
+      ? `<div class="photo"><img src="${esc(s.photo)}" alt="${esc(s.name)}" onerror="this.remove()"></div>`
+      : `<div class="photo"><span class="num">${esc(s.initials || '')}</span></div>`;
+    box.innerHTML = `
+      <div class="spot-card">${photo}</div>
+      <div class="spot-info">
+        <span class="chip-sm">${esc(s.role)}</span>
+        <h3>${esc(s.name)}</h3>
+        <p>${esc(s.desc || '')}</p>
+        <div class="spot-dots">${STAFF.map((_, i) => `<i class="${i === staffIdx ? 'on' : ''}"></i>`).join('')}</div>
+      </div>`;
+    if (animate) {
+      box.classList.remove('fade');
+      void box.offsetWidth;
+      box.classList.add('fade');
+    }
+  }
+  showStaff(false);
+
   if (!reduceMotion) {
     setInterval(() => { if (!paused) rotateSpot(); }, ROTATE_MS);
+    setInterval(() => { staffIdx = (staffIdx + 1) % STAFF.length; showStaff(true); }, STAFF_MS);
     setInterval(() => { if (!paused) swapSquad(); }, SWAP_MS);
   }
 });

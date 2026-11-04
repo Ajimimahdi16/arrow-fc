@@ -674,3 +674,6 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.85); }
 
 .admin-row3 { display: grid; grid-template-columns: 1fr 1fr 72px; gap: 8px; }
 .admin-row3 select, .admin-row3 input { width: 100%; padding: 10px 12px; font: inherit; color: var(--white); background: #0f1012; border: 1px solid var(--line); border-radius: 10px; }
+
+.side { display: grid; gap: 18px; align-content: start; }
+.staff-card { margin-top: 0; }

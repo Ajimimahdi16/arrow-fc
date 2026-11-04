@@ -97,6 +97,12 @@
       { type: 'video', category: 'partite', src: 'assets/gallery/highlights.mp4', caption: 'Highlights' }
     ],
 
+    // Dirigenza e allenatore: la scheda cambia da sola. Per aggiungere una persona, copia una voce.
+    staff: [
+      { name: 'Allenatore', role: 'Allenatore', initials: 'AL', photo: '', desc: 'Foto e presentazione in arrivo.' },
+      { name: 'Dirigenza', role: 'Dirigente', initials: 'DI', photo: '', desc: 'Foto e presentazione in arrivo.' }
+    ],
+
     // Sponsor 2026/27 dal PDF "loghi". Per aggiungerne uno: nome e percorso del logo.
     sponsors: [
       { name: 'NetSox', logo: 'assets/sponsors/netsox.png', tone: 'dark' },
