@@ -336,14 +336,18 @@ window.ARROW_READY.then(() => {
         return `${esc(name)}${number ? ` (${number})` : ''}`;
       }).join(', ');
       let res = '';
-      if (m.score) {
+      if (m.live) {
+        const us = m.score ? m.score.us : 0;
+        const them = m.score ? m.score.them : 0;
+        res = `<span class="live-tag"><i></i>In diretta</span><span class="score">${esc(us)} – ${esc(them)}</span>`;
+      } else if (m.score) {
         const { us, them } = m.score;
         const outcome = us > them ? 'win' : us < them ? 'loss' : 'draw';
         const label = { win: 'Vittoria', loss: 'Sconfitta', draw: 'Pareggio' }[outcome];
         res = `<span class="score">${esc(us)} – ${esc(them)}</span><span class="outcome ${outcome}">${label}</span>`;
       } else if (d < now) res = '<span class="badge">Risultato da inserire</span>';
       return `
-        <li class="match${m === nextMatch ? ' next' : ''}">
+        <li class="match${m === nextMatch ? ' next' : ''}${m.live ? ' live' : ''}">
           <div class="mdate">
             <b>${esc(d.toLocaleDateString('it-IT', { weekday: 'short', day: '2-digit', month: 'short' }))}</b>
             <span>${esc(d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }))}</span>
@@ -460,6 +464,16 @@ window.ARROW_READY.then(() => {
   renderSponsors();
   renderSocial();
   startCountdown();
+
+  // ---------- Partita in diretta: il sito si aggiorna ogni minuto ----------
+  async function refreshLive() {
+    if (document.hidden || !window.arrowRefresh) return;
+    await window.arrowRefresh();
+    applyStats();
+    renderRoster();
+    renderMatches();
+  }
+  setInterval(refreshLive, 60000);
 
   // ---------- Dirigenza e allenatore (scheda che cambia) ----------
   const STAFF = D.staff || [];

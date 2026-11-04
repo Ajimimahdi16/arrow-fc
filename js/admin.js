@@ -218,6 +218,7 @@
         <label class="admin-full">Risultato
           <span class="admin-score"><input type="number" min="0" name="us" value="${match?.score_us ?? ''}" placeholder="Noi"> – <input type="number" min="0" name="them" value="${match?.score_them ?? ''}" placeholder="Loro"></span>
         </label>
+        <label class="admin-check admin-full"><input type="checkbox" name="live" ${match?.is_live ? 'checked' : ''}> In diretta ora (mostra il bottone rosso sul sito)</label>
         <p class="admin-full admin-sub">Marcatori</p>
         ${scorerRows('goal', goals, players)}
         <p class="admin-full admin-sub">Assist</p>
@@ -290,7 +291,8 @@
       opponent: (f.get('opponent') || '').trim() || null,
       competition: 'Serie A LegaCalcio a 8',
       score_us: f.get('us') === '' ? null : Number(f.get('us')),
-      score_them: f.get('them') === '' ? null : Number(f.get('them'))
+      score_them: f.get('them') === '' ? null : Number(f.get('them')),
+      is_live: f.get('live') === 'on'
     };
     const crest = f.get('crest');
     if (crest && crest.size) row.crest_url = await uploadFile(crest, `crests/${Date.now()}-${safeName(crest.name)}`);

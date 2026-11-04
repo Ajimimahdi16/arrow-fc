@@ -63,6 +63,7 @@
         opponent: r.opponent || '',
         crest: r.crest_url || '',
         competition: r.competition,
+        live: !!r.is_live,
         score: r.score_us == null ? null : { us: r.score_us, them: r.score_them },
         goals: evs.filter((e) => e.kind === 'goal').map(toEntry),
         assists: evs.filter((e) => e.kind === 'assist').map(toEntry),
@@ -191,6 +192,8 @@
   }
 
   window.importArrowData = importAll;
+  // Rilegge il database mentre il sito è aperto (usato per la partita in diretta)
+  window.arrowRefresh = () => loadFromDb().catch((err) => console.warn('Aggiornamento non riuscito:', err));
   // Il sito parte solo dopo aver letto il database (o aver visto che non risponde)
   window.ARROW_READY = loadFromDb().catch((err) => {
     console.warn('Database non raggiungibile, uso i dati di partenza:', err);
