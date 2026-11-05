@@ -431,11 +431,34 @@ window.ARROW_READY.then(() => {
   // ---------- Sponsor ----------
   function renderSponsors() {
     $('#sponsorGrid').innerHTML = D.sponsors.map((s) => `
-      <figure class="sponsor">
-        <div class="sponsor-logo ${esc(s.tone)}"><img src="${esc(s.logo)}" alt="${esc(s.name)}" loading="lazy" onerror="this.closest('.sponsor').remove()"></div>
-        <figcaption>${esc(s.name)}</figcaption>
-      </figure>`).join('');
+      <div class="sponsor-card">
+        <div class="sponsor-card-inner">
+          <button class="sponsor-front" type="button" aria-label="Scopri ${esc(s.name)}">
+            <span class="sponsor-logo ${esc(s.tone)}"><img src="${esc(s.logo)}" alt="" loading="lazy" onerror="this.closest('.sponsor-card').remove()"></span>
+            <span class="sponsor-name">${esc(s.name)}</span>
+          </button>
+          <div class="sponsor-back">
+            <b>${esc(s.name)}</b>
+            <p>${esc(s.desc || 'Sponsor di Arrow F.C. nella stagione 2026/27.')}</p>
+            ${s.instagram ? `<a href="${esc(s.instagram)}" target="_blank" rel="noopener">Instagram →</a>` : ''}
+            <button class="btn sponsor-back-btn" type="button">Indietro</button>
+          </div>
+        </div>
+      </div>`).join('');
   }
+
+  $('#sponsorGrid').addEventListener('click', (e) => {
+    const card = e.target.closest('.sponsor-card');
+    if (!card) return;
+    if (e.target.closest('.sponsor-front')) {
+      if (card.classList.contains('squish') || card.classList.contains('flipped')) return;
+      // Prima la card si schiaccia, poi gira
+      card.classList.add('squish');
+      setTimeout(() => card.classList.add('flipped'), 150);
+      setTimeout(() => card.classList.remove('squish'), 380);
+    }
+    if (e.target.closest('.sponsor-back-btn')) card.classList.remove('flipped');
+  });
 
   // ---------- Social ----------
   function renderSocial() {

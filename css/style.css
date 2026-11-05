@@ -685,3 +685,26 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.85); }
 
 .side { display: grid; gap: 18px; align-content: start; }
 .staff-card { margin-top: 0; }
+
+/* ---------- Card sponsor che si girano ---------- */
+.sponsor-card { perspective: 1000px; }
+.sponsor-card-inner { position: relative; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.sponsor-card.flipped .sponsor-card-inner { transform: rotateY(180deg); }
+.sponsor-card.squish { animation: sponsorSquish 0.38s cubic-bezier(0.3, 0.7, 0.4, 1); }
+@keyframes sponsorSquish {
+  0% { transform: scale(1, 1); }
+  40% { transform: scale(1.03, 0.9); }
+  100% { transform: scale(1, 1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sponsor-card.squish { animation: none; }
+  .sponsor-card-inner { transition: none; }
+}
+.sponsor-front { display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: center; cursor: pointer; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.sponsor-front:focus-visible { outline: 2px solid var(--white); outline-offset: 4px; border-radius: var(--radius); }
+.sponsor-name { display: block; margin-top: 10px; font-size: 14px; color: var(--grey-2); }
+.sponsor-back { position: absolute; inset: 0; transform: rotateY(180deg); backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; align-content: center; justify-items: center; gap: 10px; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); text-align: center; }
+.sponsor-back b { font-size: 16px; }
+.sponsor-back p { margin: 0; font-size: 14px; color: var(--grey-2); }
+.sponsor-back a { font-size: 14px; color: var(--white); }
+.sponsor-back-btn { margin-top: 4px; }

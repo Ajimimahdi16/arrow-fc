@@ -74,7 +74,7 @@
       D.gallery = gallery.data.map((r) => ({ type: r.kind, category: r.category, src: r.src, caption: r.caption || '' }));
     }
     if (sponsors.data.length) {
-      D.sponsors = sponsors.data.map((r) => ({ name: r.name, logo: r.logo_url, tone: r.tone }));
+      D.sponsors = sponsors.data.map((r) => ({ name: r.name, logo: r.logo_url, tone: r.tone, desc: r.description || '', instagram: r.instagram || '' }));
     }
     if (collection.data.length) {
       D.collection = collection.data.map((r) => r.src);
