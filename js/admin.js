@@ -359,6 +359,8 @@
         <label class="admin-full">Nome<input type="text" name="name" value="${esc(s?.name || '')}" required></label>
         <label>Sfondo<select name="tone"><option value="dark" ${s?.tone !== 'light' ? 'selected' : ''}>Scuro</option><option value="light" ${s?.tone === 'light' ? 'selected' : ''}>Chiaro</option></select></label>
         <label>Ordine nella pagina<input type="number" name="sort" value="${s?.sort ?? 100}" min="0"></label>
+        <label class="admin-full">Descrizione (retro della scheda)<textarea name="description" rows="3">${esc(s?.description || '')}</textarea></label>
+        <label class="admin-full">Profilo Instagram<input type="url" name="instagram" value="${esc(s?.instagram || '')}" placeholder="https://www.instagram.com/..."></label>
         <label class="admin-full">Logo${s ? ' (lascia vuoto per tenere quello attuale)' : ''}<input type="file" name="logo" accept="image/*"></label>
       </form>
       ${foot()}
@@ -369,7 +371,13 @@
     const f = new FormData(form);
     const name = (f.get('name') || '').trim();
     if (!name) throw new Error('Inserisci il nome');
-    const row = { name, tone: f.get('tone') || 'dark', sort: Number(f.get('sort')) || 0 };
+    const row = {
+      name,
+      tone: f.get('tone') || 'dark',
+      sort: Number(f.get('sort')) || 0,
+      description: (f.get('description') || '').trim() || null,
+      instagram: (f.get('instagram') || '').trim() || null
+    };
     const logo = f.get('logo');
     if (logo && logo.size) row.logo_url = await uploadFile(logo, `sponsors/${Date.now()}-${safeName(logo.name)}`);
     if (id) {
