@@ -708,3 +708,56 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.85); }
 .sponsor-back p { margin: 0; font-size: 14px; color: var(--grey-2); }
 .sponsor-back a { font-size: 14px; color: var(--white); }
 .sponsor-back-btn { margin-top: 4px; }
+
+/* ---------- Maglie ---------- */
+.kit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; max-width: 1060px; margin: 0 auto; }
+.kit-card { margin: 0; text-align: center; }
+.kit-stage {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: radial-gradient(ellipse 70% 60% at 50% 45%, #2a2b2f 0%, #141518 60%, #0b0b0c 100%);
+  overflow: hidden;
+}
+.kit-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 0.6s; }
+.kit-stage.is-ready canvas { opacity: 1; }
+.kit-stage[data-kit]::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 28px; height: 28px; margin: -14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--grey-2);
+  border-radius: 50%;
+  animation: kitSpin 0.9s linear infinite;
+}
+.kit-stage.is-ready::after, .kit-stage.is-error::after { display: none; }
+@keyframes kitSpin { to { transform: rotate(360deg); } }
+.kit-card figcaption { display: flex; flex-direction: column; gap: 2px; margin-top: 12px; }
+.kit-card figcaption b { font-family: var(--font-title); font-size: 20px; letter-spacing: 0.06em; }
+.kit-card figcaption span { font-size: 14px; color: var(--grey); }
+.kit-stage-soon { display: grid; place-items: center; }
+.kit-stage-soon { align-content: center; gap: 18px; }
+.kit-crest {
+  width: 66%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 58%, transparent 69%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 58%, transparent 69%);
+  animation: crestGlow 4s ease-in-out infinite;
+}
+@keyframes crestGlow { 50% { transform: scale(1.03); filter: brightness(1.15); } }
+.kit-soon-text {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: clamp(18px, 2.2vw, 24px);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  background: var(--silver);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (prefers-reduced-motion: reduce) { .kit-crest { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .kit-stage[data-kit]::after { animation: none; } }

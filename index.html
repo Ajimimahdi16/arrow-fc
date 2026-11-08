@@ -9,7 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=3">
+  <link rel="stylesheet" href="css/style.css?v=4">
+  <script type="importmap">
+  { "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  } }
+  </script>
 </head>
 <body>
   <header class="site-header" id="header">
@@ -26,6 +32,7 @@
       <a href="#partite">Calendario</a>
       <a href="#galleria">Galleria</a>
       <a href="#sponsor">Sponsor</a>
+      <a href="#maglie">Maglie</a>
       <a href="#social">Social</a>
     </nav>
   </header>
@@ -118,6 +125,28 @@
       <div class="sponsor-grid" id="sponsorGrid"></div>
     </section>
 
+    <section id="maglie" class="section alt">
+      <h2 class="section-title">Le maglie 2026/27</h2>
+      <p class="section-sub">Le divise ufficiali di Arrow F.C.</p>
+      <div class="kit-grid">
+        <figure class="kit-card">
+          <div class="kit-stage" data-kit="nera" role="img" aria-label="Maglia nera Arrow F.C. che ruota"></div>
+          <figcaption><b>Maglia nera</b><span>Casa</span></figcaption>
+        </figure>
+        <figure class="kit-card">
+          <div class="kit-stage" data-kit="rosa" role="img" aria-label="Maglia rosa Arrow F.C. che ruota"></div>
+          <figcaption><b>Maglia rosa</b><span>Fuori casa</span></figcaption>
+        </figure>
+        <figure class="kit-card kit-soon">
+          <div class="kit-stage kit-stage-soon">
+            <img class="kit-crest" src="assets/logo.jpg" alt="Stemma Arrow F.C.">
+            <span class="kit-soon-text">Coming soon</span>
+          </div>
+          <figcaption><b>Felpa</b><span>Coming soon</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section id="social" class="section">
       <h2 class="section-title">Seguici</h2>
       <p class="section-sub">Aggiornamenti, highlights e dietro le quinte.</p>
@@ -144,5 +173,6 @@
   <script src="js/db.js?v=4"></script>
   <script src="js/app.js?v=7"></script>
   <script src="js/admin.js?v=5"></script>
+  <script type="module" src="js/maglie3d.js?v=1"></script>
 </body>
 </html>
